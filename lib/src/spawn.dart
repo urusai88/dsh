@@ -32,6 +32,8 @@ ProcessResult spawn(
     environment: environment,
   );
 
+  print(result.stdout.runtimeType);
+
   if (result.stdout case final String s when s.isNotEmpty) {
     // print(s);
   }
