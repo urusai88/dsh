@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 import 'fsi.dart';
-import 'spawn.dart';
 
 bool exists(String path) => FileSystemEntity(path).existsSync();
 

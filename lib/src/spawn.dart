@@ -20,6 +20,8 @@ ProcessResult spawn(
     _ => throw Exception('Invalid arguments $command'),
   };
 
+  print('spawn $executable ${arguments.join(' ')}');
+
   final result = Process.runSync(
     executable,
     arguments,
