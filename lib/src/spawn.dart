@@ -39,6 +39,13 @@ ProcessResult spawn(
   return result;
 }
 
+ProcessResult spawnSplit(
+  String command, {
+  String? cwd,
+  Map<String, String>? environment,
+}) =>
+    spawn(command.split(' '), cwd: cwd, environment: environment);
+
 SpawnFunction spawnWithEnvironment(Map<String, String>? baseEnvironment) {
   return (dynamic command, {String? cwd, Map<String, String>? environment}) {
     final e = baseEnvironment != null || environment != null
