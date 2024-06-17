@@ -28,3 +28,16 @@ ProcessResult spawn(
     environment: environment,
   );
 }
+
+SpawnFunction spawnWithEnvironment(Map<String, String>? baseEnvironment) {
+  return (dynamic command, {String? cwd, Map<String, String>? environment}) {
+    final e = baseEnvironment != null || environment != null
+        ? <String, String>{
+            if (baseEnvironment != null) ...baseEnvironment,
+            if (environment != null) ...environment,
+          }
+        : null;
+
+    return spawn(command, cwd: cwd, environment: e);
+  };
+}
