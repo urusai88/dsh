@@ -63,8 +63,15 @@ Future<void> spawnSplit(
   String? cwd,
   Map<String, String>? environment,
   bool sync = true,
+  bool log = false,
 }) =>
-    spawn(command.split(' '), cwd: cwd, environment: environment, sync: sync);
+    spawn(
+      command.split(' '),
+      cwd: cwd,
+      environment: environment,
+      sync: sync,
+      log: log,
+    );
 
 SpawnFunction spawnWithEnvironment(Map<String, String>? baseEnvironment) {
   return (
