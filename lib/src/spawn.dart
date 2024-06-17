@@ -21,7 +21,7 @@ ProcessResult spawn(
   };
 
   print(
-    'spawn $executable ${arguments.join(' ')} ${cwd != null ? 'cwd: $cwd' : ''}',
+    'spawn \'$executable ${arguments.join(' ')}\' ${cwd != null ? 'cwd: \'$cwd\'' : ''}',
   );
 
   final result = Process.runSync(
