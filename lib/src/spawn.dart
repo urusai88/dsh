@@ -20,7 +20,9 @@ ProcessResult spawn(
     _ => throw Exception('Invalid arguments $command'),
   };
 
-  print('spawn $executable ${arguments.join(' ')}');
+  print(
+    'spawn $executable ${arguments.join(' ')} ${cwd != null ? 'cwd: $cwd' : ''}',
+  );
 
   final result = Process.runSync(
     executable,
@@ -31,7 +33,7 @@ ProcessResult spawn(
   );
 
   if (result.stdout case final String s when s.isNotEmpty) {
-    print(s);
+    // print(s);
   }
 
   if (result.stderr case final String s when s.isNotEmpty) {
