@@ -33,8 +33,9 @@ void cp(String src, String dst, {String? cwd}) {
 }
 
 void cpIfNotExists(String src, String dst, {String? cwd}) {
+  (src, dst) = _cwd(src, dst, cwd);
   if (!exists(dst)) {
-    cp(src, dst, cwd: cwd);
+    cp(src, dst);
   }
 }
 
