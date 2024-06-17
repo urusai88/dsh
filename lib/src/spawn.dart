@@ -20,13 +20,23 @@ ProcessResult spawn(
     _ => throw Exception('Invalid arguments $command'),
   };
 
-  return Process.runSync(
+  final result = Process.runSync(
     executable,
     arguments,
     workingDirectory: cwd,
     // runInShell: true,
     environment: environment,
   );
+
+  if (result.stdout case final String s when s.isNotEmpty) {
+    print(s);
+  }
+
+  if (result.stderr case final String s when s.isNotEmpty) {
+    print(s);
+  }
+
+  return result;
 }
 
 SpawnFunction spawnWithEnvironment(Map<String, String>? baseEnvironment) {
