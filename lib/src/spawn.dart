@@ -1,16 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
 
-typedef SpawnFunction = ProcessResult Function(
+typedef SpawnFunction = Future<void> Function(
   dynamic command, {
   String? cwd,
   Map<String, String>? environment,
+  bool sync,
+  bool log,
 });
 
-ProcessResult spawn(
+Future<void> spawn(
   dynamic command, {
   String? cwd,
   Map<String, String>? environment,
-}) {
+  bool sync = true,
+  bool log = false,
+}) async {
   final (executable, arguments) = switch (command) {
     final String executable => (executable, const <String>[]),
     final List arguments when arguments.isNotEmpty => (
@@ -24,36 +29,51 @@ ProcessResult spawn(
     'spawn \'$executable ${arguments.join(' ')}\' ${cwd != null ? 'cwd: \'$cwd\'' : ''}',
   );
 
-  final result = Process.runSync(
-    executable,
-    arguments,
-    workingDirectory: cwd,
-    // runInShell: true,
-    environment: environment,
-  );
+  if (sync) {
+    final result = Process.runSync(
+      executable,
+      arguments,
+      workingDirectory: cwd,
+      environment: environment,
+    );
+    if (result.stderr case final String s when s.isNotEmpty) {
+      print(s);
+    }
+    if (result.stdout case final String s when s.isNotEmpty && log) {
+      print(s);
+    }
+  } else {
+    final process = await Process.start(
+      executable,
+      arguments,
+      workingDirectory: cwd,
+      environment: environment,
+    );
 
-  print(result.stdout.runtimeType);
-
-  if (result.stdout case final String s when s.isNotEmpty) {
-    // print(s);
+    process.stderr.transform(utf8.decoder).listen(print);
+    if (log) {
+      process.stdout.transform(utf8.decoder).listen(print);
+    }
+    await process.exitCode;
   }
-
-  if (result.stderr case final String s when s.isNotEmpty) {
-    print(s);
-  }
-
-  return result;
 }
 
-ProcessResult spawnSplit(
+Future<void> spawnSplit(
   String command, {
   String? cwd,
   Map<String, String>? environment,
+  bool sync = true,
 }) =>
-    spawn(command.split(' '), cwd: cwd, environment: environment);
+    spawn(command.split(' '), cwd: cwd, environment: environment, sync: sync);
 
 SpawnFunction spawnWithEnvironment(Map<String, String>? baseEnvironment) {
-  return (dynamic command, {String? cwd, Map<String, String>? environment}) {
+  return (
+    dynamic command, {
+    String? cwd,
+    Map<String, String>? environment,
+    bool sync = true,
+    bool log = false,
+  }) {
     final e = baseEnvironment != null || environment != null
         ? <String, String>{
             if (baseEnvironment != null) ...baseEnvironment,
@@ -61,6 +81,6 @@ SpawnFunction spawnWithEnvironment(Map<String, String>? baseEnvironment) {
           }
         : null;
 
-    return spawn(command, cwd: cwd, environment: e);
+    return spawn(command, cwd: cwd, environment: e, sync: sync, log: log);
   };
 }
